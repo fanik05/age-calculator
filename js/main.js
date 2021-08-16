@@ -18,6 +18,7 @@ displayGreetings()
 
 const displayAge = () => {
     const age = prompt('Enter your date of birth: (dd/mm/yyyy)', 'dd/mm/yyyy')
+    
     if (age.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) {
         const dobString = age.split('\/')
         const dob = new Date()
