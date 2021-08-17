@@ -131,3 +131,10 @@ resetButton.style.alignSelf = 'center'
 resetButton.innerText = 'Reset'
 resetButton.addEventListener('click', () => location.reload())
 wrapper.append(resetButton)
+
+const clearAllDataButton = document.createElement('button')
+clearAllDataButton.style.alignSelf = 'center'
+clearAllDataButton.style.marginLeft = '20px'
+clearAllDataButton.innerText = 'Clear All Data'
+clearAllDataButton.addEventListener('click', () => localStorage.clear())
+wrapper.append(clearAllDataButton)
