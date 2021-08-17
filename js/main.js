@@ -113,14 +113,16 @@ const displayAge = () => {
 
         calculateAge(age)
     } else {
-        age = ''
+        while (true) {
+            age = prompt('Enter your date of birth: (dd/mm/yyyy)')
 
-        while (!age.match(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/)) {
-            age += prompt('Enter your date of birth: (dd/mm/yyyy)', 'dd/mm/yyyy')
+            if (/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/.test(age)) {
+                break    
+            }
         }
 
         calculateAge(age)
-        setInfoToLocalStorage({ name: userName, dob: age})
+        setInfoToLocalStorage({ name: userName, dob: age })
     }
 }
 
