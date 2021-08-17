@@ -125,3 +125,9 @@ const displayAge = () => {
 }
 
 displayAge()
+
+const resetButton = document.createElement('button')
+resetButton.style.alignSelf = 'center'
+resetButton.innerText = 'Reset'
+resetButton.addEventListener('click', () => location.reload())
+wrapper.append(resetButton)
