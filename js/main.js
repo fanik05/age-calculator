@@ -1,5 +1,6 @@
 const wrapper = document.getElementById('root')
 wrapper.style.textAlign = 'center'
+wrapper.style.marginTop = '5vh'
 
 const getInfoFromLocalStorage = () => {   
     let data 
@@ -20,15 +21,15 @@ const setInfoToLocalStorage = info => {
    localStorage.setItem('data', JSON.stringify(data))
 }
 
-let userName
+let userName, heading
 
 const displayGreetings = () => {
     userName = prompt('Enter your name:')
 
     if (userName) {
-        const heading = document.createElement('h1')
+        heading = document.createElement('h1')
         heading.innerText = 'Hello, ' + userName + '!'
-        heading.style.marginTop = '20vh'
+        heading.style.marginTop = '5vh'
         wrapper.appendChild(heading)
     } else {
         displayGreetings()
@@ -104,9 +105,10 @@ const calculateAge = age => {
     }, 1000)
 }
 
+let age
+
 const displayAge = () => {
     const data = getInfoFromLocalStorage()
-    let age
 
     if (data.some(info => info.name === userName)) {
         age = data.filter(info => info.name === userName)[0].dob
@@ -122,7 +124,7 @@ const displayAge = () => {
         }
 
         calculateAge(age)
-        setInfoToLocalStorage({ name: userName, dob: age })
+        // setInfoToLocalStorage({ name: userName, dob: age })
     }
 }
 
@@ -140,3 +142,80 @@ clearAllDataButton.style.marginLeft = '20px'
 clearAllDataButton.innerText = 'Clear All Data'
 clearAllDataButton.addEventListener('click', () => localStorage.clear())
 wrapper.append(clearAllDataButton)
+
+let image
+
+const addImage = image => {
+    const img = document.createElement('img')
+    img.setAttribute('src', image)
+    img.setAttribute('width', '480px')
+    img.setAttribute('height', '360px')
+    wrapper.insertBefore(img, heading)
+}
+
+const displayImage = () => {
+    const data = getInfoFromLocalStorage()
+    
+    if (data.some(info => info.image && info.name === userName)) {
+        image = data.filter(info => info.name === userName)[0].image
+        
+        addImage(image)
+    } else {
+        wrapper.style.display = 'none'
+        const takePictureElement = document.createElement('div')
+        takePictureElement.setAttribute('id', 'take-picture')
+        takePictureElement.style.textAlign = 'center'
+        document.body.appendChild(takePictureElement)
+        const videoElement = document.createElement('video')
+        videoElement.setAttribute('width', '480px')
+        videoElement.setAttribute('height', '360px')
+        videoElement.setAttribute('autoplay', '')
+        const takePicture = document.getElementById('take-picture')
+        takePicture.appendChild(videoElement)
+        const video = document.querySelector('video')
+        video.style.display = 'block'
+        video.style.margin = '5vh auto'
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                video.srcObject = stream
+                video.play()
+            })
+        }
+
+        const takePhotoButton = document.createElement('button')
+        takePhotoButton.style.alignSelf = 'center'
+        takePhotoButton.innerText = 'Take Photo'
+        takePicture.appendChild(takePhotoButton)
+        takePhotoButton.addEventListener('click', () => {
+            document.querySelector('canvas').getContext('2d').drawImage(video, 0, 0, 480, 360)
+        })
+
+        let image
+
+        const confirmPhotoButton = document.createElement('button')
+        confirmPhotoButton.style.alignSelf = 'center'
+        confirmPhotoButton.style.marginLeft = '20px'
+        confirmPhotoButton.innerText = 'Confirm'
+        takePicture.appendChild(confirmPhotoButton)
+        confirmPhotoButton.addEventListener('click', () => {
+            image = document.querySelector('canvas').toDataURL()
+
+            setInfoToLocalStorage({ name: userName, dob: age, image })
+
+            takePicture.style.display = 'none'
+            wrapper.style.display = 'block'
+
+            addImage(image)
+        })
+
+        const outputCanvas = document.createElement('canvas')
+        outputCanvas.setAttribute('width', '480px')
+        outputCanvas.setAttribute('height', '360px')
+        outputCanvas.style.display = 'block'
+        outputCanvas.style.margin = '5vh auto'
+        takePicture.appendChild(outputCanvas)
+    }
+}
+
+displayImage()
