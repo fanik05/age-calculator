@@ -124,7 +124,6 @@ const displayAge = () => {
         }
 
         calculateAge(age)
-        // setInfoToLocalStorage({ name: userName, dob: age })
     }
 }
 
