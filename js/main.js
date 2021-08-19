@@ -105,15 +105,36 @@ const calculateAge = age => {
     }, 1000)
 }
 
-let age
+let age, ip, ipElement
+
+const createIpElement = () => {
+    ipElement = document.createElement('h1')
+    wrapper.appendChild(ipElement)
+}
+
+const jsonp = (url, callback) => {
+    const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random())
+    window[callbackName] = data => {
+        delete window[callbackName]
+        document.body.removeChild(script)
+        callback(data)
+    }
+
+    const script = document.createElement('script')
+    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName
+    document.body.appendChild(script)
+}
 
 const displayAge = () => {
     const data = getInfoFromLocalStorage()
 
     if (data.some(info => info.name === userName)) {
         age = data.filter(info => info.name === userName)[0].dob
+        ip = data.filter(info => info.name === userName)[0].ip
 
         calculateAge(age)
+        createIpElement()
+        ipElement.innerText = `Your IP address: ${ip}`
     } else {
         while (true) {
             age = prompt('Enter your date of birth: (dd/mm/yyyy)')
@@ -122,8 +143,13 @@ const displayAge = () => {
                 break    
             }
         }
-
+        
         calculateAge(age)
+        createIpElement()
+        jsonp('https://freegeoip.app/json', data => {
+            ipElement.innerText = `Your IP address: ${data.ip}`
+            ip = data.ip
+        })
     }
 }
 
@@ -200,7 +226,7 @@ const displayImage = () => {
         confirmPhotoButton.addEventListener('click', () => {
             image = document.querySelector('canvas').toDataURL()
 
-            setInfoToLocalStorage({ name: userName, dob: age, image })
+            setInfoToLocalStorage({ name: userName, dob: age, image, ip })
 
             takePicture.style.display = 'none'
             wrapper.style.display = 'block'
